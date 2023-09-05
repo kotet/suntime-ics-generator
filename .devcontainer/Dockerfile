@@ -1,36 +1,36 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates \
+    ca-certificates \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        tzdata \
+    tzdata \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
     && ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
     && echo 'Asia/Tokyo' >/etc/timezone
 
 RUN apt-get update \
     && apt-get install -y \
-        git sudo vim bash-completion rsync wget curl \
+    git vim bash-completion rsync wget curl \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 RUN groupadd --gid 1000 vscode \
-    && useradd --uid 1000 --gid 1000 -m vscode \
-    && echo vscode ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/vscode \
-    && chmod 0440 /etc/sudoers.d/vscode
+    && useradd --uid 1000 --gid 1000 -m vscode
 
 RUN apt-get update \
     && apt-get install -y \
-        build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev libgdbm-dev libbz2-dev liblzma-dev zlib1g-dev uuid-dev libffi-dev libdb-dev tk-dev \
+    build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev libgdbm-dev libbz2-dev liblzma-dev zlib1g-dev uuid-dev libffi-dev libdb-dev tk-dev \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
-RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
-    && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list \
-    && sudo apt update \
-    && sudo apt install ngrok \
+RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
+    && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | tee /etc/apt/sources.list.d/ngrok.list \
+    && apt update \
+    && apt install ngrok \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 USER vscode
@@ -47,8 +47,9 @@ RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv \
 
 ENV PATH "$PATH:/home/vscode/local/python-${PYTHON_VERSION}/bin"
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3
-RUN poetry completions bash | sudo tee /etc/bash_completion.d/poetry.bash-completion
-ENV PATH "$PATH:/home/vscode/.poetry/bin"
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH "$PATH:/home/vscode/.local/bin"
+RUN source ~/.bashrc && mkdir -p ~/.local/share/bash-completion/ \
+    && poetry completions bash > ~/.local/share/bash-completion/poetry.bash-completion
 
 RUN poetry config virtualenvs.in-project true

@@ -4,19 +4,23 @@
         "dockerfile": "Dockerfile",
         "context": ".",
     },
-    "settings": {
-        "terminal.integrated.profiles.linux": {
-            "bash": {
-                "path": "/bin/bash"
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    },
+                },
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "editor.tabSize": 2,
             },
-        },
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "editor.tabSize": 2,
+            "extensions": [
+                "visualstudioexptteam.vscodeintellicode",
+                "ms-python.python",
+            ],
+        }
     },
-    "extensions": [
-        "visualstudioexptteam.vscodeintellicode",
-        "ms-python.python",
-    ],
     "updateRemoteUserUID": true,
     "remoteUser": "vscode",
 }
