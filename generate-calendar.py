@@ -110,7 +110,7 @@ def main() -> None:
                     alarms=alarms
                 )
             )
-    print(c)
+    print(c.serialize())
 
 
 if __name__ == "__main__":
